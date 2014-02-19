@@ -41,6 +41,15 @@ processResources
         exclude 'mcmod.info'
     }
 }
+sourceSets {
+	main {
+		java {
+			exclude 'acs/tabbychat/liteloader/**'
+			exclude 'net/**'
+		}
+	}
+}
 dependencies {
 	compile 'junit:junit:4.8.1'
+	compile 'org.lwjgl.lwjgl:lwjgl:2.9.0'
 }
