@@ -12,10 +12,9 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-	}
+    }
 }
-
-import static net.minecraftforge.gradle.dev.DevBasePlugin.*
+import static net.minecraftforge.gradle.dev.DevBasePlugin.runGit
 
 apply plugin: 'fml'
 
@@ -28,54 +27,54 @@ archivesBaseName = "TabbyChat"
 minecraft {
     version = "1.7.10_pre4-7.9.34.936-mc179"
     assetDir = "eclipse/assets"
-	
-	replace "@@VERSION@@", project.version
+
+    replace "@@VERSION@@", project.version
 }
 processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-	inputs.property "revision", project.build
-	
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info', 'litemod.json'
+        {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
+            inputs.property "revision", project.build
 
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'revision':project.build
-    }
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info', 'litemod.json'
 
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info', 'litemod.json'
-    }
-}
+                // replace version and mcversion
+                expand 'version': project.version, 'mcversion': project.minecraft.version, 'revision': project.build
+            }
+
+            // copy everything else, thats not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info', 'litemod.json'
+            }
+        }
 sourceSets {
-	main {
-		java {exclude '**/LiteMod*', 'net/minecraft/**'}
-		compileClasspath = configurations.default // Work around ForgeGradle#101
-	}
+    main {
+        java { exclude '**/LiteMod*', 'net/minecraft/**' }
+        compileClasspath = configurations.default // Work around ForgeGradle#101
+    }
 }
 dependencies {
-	compile 'net.sf.jazzy:jazzy:0.5.2-rtext-1.4.1-2'
+    compile 'net.sf.jazzy:jazzy:0.5.2-rtext-1.4.1-2'
 }
-jar{
-	from ( configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}) { exclude 'META-INF/**' }
-	appendix = minecraft.version
-	exclude 'acs/tabbychat/core/LiteModTabbyChat.class', 'litemod.json'
+jar {
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) { exclude 'META-INF/**' }
+    appendix = minecraft.version
+    exclude 'acs/tabbychat/core/LiteModTabbyChat.class', 'litemod.json'
 }
-String getBuildNo(){
-	String build = runGit(project, project.getProjectDir(), "rev-list", "HEAD", "--count")
-	return build
+
+String getBuildNo() {
+    return runGit(project, project.getProjectDir(), "rev-list", "HEAD", "--count")
 }
-String getRevision(){
-	String tag = runGit(project, project.getProjectDir(), "describe", "--tags", "--abbrev=0")
-	String rev = runGit(project, project.getProjectDir(), "rev-list", tag + "..HEAD", "--count")
-	return rev
+
+String getRevision() {
+    String tag = runGit(project, project.getProjectDir(), "describe", "--tags", "--abbrev=0")
+    return runGit(project, project.getProjectDir(), "rev-list", tag + "..HEAD", "--count")
 }
 /* // Disable until LiteLoader updates
-apply plugin: 'liteloader' 
+apply plugin: 'liteloader'
 jarLiteloader{
 	from configurations.compile.collect { it.isDirectory() ? it : project.zipTree(it)}
 	appendix = minecraft.version
