@@ -1,3 +1,5 @@
+This repo is no longer updated.  Updates will go to [killjoy1221's github](http://github.com/killjoy1221/tabbychat).
+
 tabbychat
 =========
 
